@@ -2,9 +2,12 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
-public class Labirint implements Cloneable{
-    public boolean[][] square;
-    int n, m;
+public class Labirint {
+    /*
+        Class for square mazes
+     */
+    boolean[][] square;
+    private int n, m;
     int minPath = Integer.MAX_VALUE;
 
 
@@ -15,16 +18,13 @@ public class Labirint implements Cloneable{
         init();
     }
 
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
-
     public void randLab(int numExits) {
+        // Generate random points. Similar points can't stay together
         Random rand = new Random();
         for (int j = 0; j < numExits; j++) {
             int line = n;
             for (int i = 0; i <= (n - m) / 2; i += 2) {
-                // выкалываем препятствия из рядов
+                // Deleting points from rows
                 int r = (int) (rand.nextDouble()*(line*4-4));
                 if (r < line - 1) {
                     if (checkField(i, r) && square[i][r])
@@ -60,7 +60,7 @@ public class Labirint implements Cloneable{
 
             line = n - 2;
             for (int i = 1; i < (n-m)/2; i += 2) {
-                // рандомные препятствия между рядами
+                // Add random points into rows
                 int r = (int) (rand.nextDouble()*(line*4-4));
                 if (r < line - 1) {
                     if (checkField(i, r) && !square[i][r])
@@ -97,6 +97,7 @@ public class Labirint implements Cloneable{
     }
 
     public boolean checkField(int x, int y) {
+        // check if here too many similar points together
         boolean sign = !square[x][y];
         int numSim = 0;
         if (x > 0) {
@@ -124,6 +125,7 @@ public class Labirint implements Cloneable{
     }
 
     public void init() {
+        // Initialize maze
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if ((((i < (n-m)/2+1)||(i > (n+m)/2-2)) ||
@@ -138,6 +140,7 @@ public class Labirint implements Cloneable{
     }
 
     public void show() {
+        // Describe in text form
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (square[i][j])
@@ -150,6 +153,7 @@ public class Labirint implements Cloneable{
     }
 
     public void makeAdditionCircle(boolean ch) {
+        // Make one circle into centre of maze to optimize DFS
         for (int i = 0; i < (m-2); i++) {
             square[(n - m) / 2 + 1][(n - m) / 2 + 1 + i] = ch;
             square[n - (n - m) / 2 - 2][(n - m) / 2 + 1 + i] = ch;
@@ -161,6 +165,7 @@ public class Labirint implements Cloneable{
     }
 
     public ArrayList<Integer> DFSForAll() {
+        // Starts DFS from every entree
         ArrayList<Integer> Len = new ArrayList<>();
 
         makeAdditionCircle(true);
@@ -189,29 +194,13 @@ public class Labirint implements Cloneable{
     }
 
     public int DFS(int x, int y, int lenPath, boolean[][] mySquare) {
-        //System.out.println("x=" + x + ", y=" + y);
+        //Just DFS
         if (lenPath >= minPath)
             return lenPath;
         if ((x == 0) || (y == 0) || (x == n-1) || (y == n-1)) {
-            //System.out.println("Path: " + lenPath);
             minPath = lenPath;
             return lenPath;
         }
-
-        /*
-                SHOW
-         */
-        /*
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (square[i][j])
-                    System.out.print("*");
-                else
-                    System.out.print(" ");
-            }
-            System.out.println();
-        }
-        */
 
         int ans = Integer.MAX_VALUE;
         mySquare[x][y] = true;

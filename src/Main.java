@@ -10,7 +10,6 @@ public class Main extends JPanel {
     private static int m;
     private static int numHoles;
     private static Labirint lab;
-    private static Labirint preLab;
     private static final int PX = 8;
 
 
@@ -75,17 +74,13 @@ public class Main extends JPanel {
     }
 
 
-    public static void main(String[] args) throws CloneNotSupportedException {
+    public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         System.out.print("Enter even n, m and numHoles: ");
         n = sc.nextInt();
         m = sc.nextInt();
         numHoles = sc.nextInt();
         System.out.println();
-        Main labs = new Main();
-        //int m = 14;
-        //int numHoles = 10;
-        //n = 50;
         lab = new Labirint(n, m);
         while (lab.minPath == Integer.MAX_VALUE) {
             makeNewMaze(n, m, numHoles);
@@ -100,24 +95,20 @@ public class Main extends JPanel {
         });
     }
 
-    public static void makeNewMaze(int n, int m, int numHoles) {
+    private static void makeNewMaze(int n, int m, int numHoles) {
         lab.init();
         lab.randLab(numHoles);
         lab = doDFS(n, m, numHoles);
     }
 
 
-    public static Labirint doDFS(int n, int m, int numHoles) {
+    private static Labirint doDFS(int n, int m, int numHoles) {
         lab.show();
         ArrayList<Integer> pathLens = lab.DFSForAll();
         int min = Integer.MAX_VALUE;
         for (int l : pathLens) {
             min = Integer.min(min, l);
         }
-            /*if (min == Integer.MAX_VALUE) {
-                n -= 2;
-                continue;
-            }*/
         System.out.println("n=" + n + ", m=" + m +", numHoles=" + numHoles);
         System.out.println("min=" + min);
         return lab;
