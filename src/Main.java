@@ -1,13 +1,17 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main extends JPanel {
     private static int n;
+    private static int m;
+    private static int numHoles;
     private static Labirint lab;
     private static Labirint preLab;
-    private static final int PX = 10;
+    private static final int PX = 8;
 
 
     @Override
@@ -16,13 +20,14 @@ public class Main extends JPanel {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (!lab.square[i][j]) {
-                    g.setColor(Color.GREEN);
+                    g.setColor(Color.BLACK);
                     g.fillRect(i*PX, j*PX, PX, PX);
                     g.setColor(Color.BLACK);
                     // g.drawRect(i*PX, j*PX, PX, PX);
                 } else {
-                    g.setColor(Color.BLACK);
+                    g.setColor(Color.MAGENTA);
                     // g.drawRect(i*PX, j*PX, PX, PX);
+                    g.fillRect(i*PX, j*PX, PX, PX);
                 }
             }
         }
@@ -44,6 +49,29 @@ public class Main extends JPanel {
         f.pack();
         f.setLocationByPlatform(true);
         f.setVisible(true);
+
+        f.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent keyEvent) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent keyEvent) {
+                if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
+                    lab = new Labirint(n, m);
+                    while (lab.minPath == Integer.MAX_VALUE) {
+                        makeNewMaze(n, m, numHoles);
+                    }
+                    f.repaint();
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent keyEvent) {
+
+            }
+        });
     }
 
 
@@ -51,8 +79,8 @@ public class Main extends JPanel {
         Scanner sc = new Scanner(System.in);
         System.out.print("Enter even n, m and numHoles: ");
         n = sc.nextInt();
-        int m = sc.nextInt();
-        int numHoles = sc.nextInt();
+        m = sc.nextInt();
+        numHoles = sc.nextInt();
         System.out.println();
         Main labs = new Main();
         //int m = 14;
@@ -60,9 +88,7 @@ public class Main extends JPanel {
         //n = 50;
         lab = new Labirint(n, m);
         while (lab.minPath == Integer.MAX_VALUE) {
-            lab.init();
-            lab.randLab(numHoles);
-            lab = doDFS(n, m, numHoles);
+            makeNewMaze(n, m, numHoles);
         }
 
 
@@ -72,6 +98,12 @@ public class Main extends JPanel {
                 createAndShowGui();
             }
         });
+    }
+
+    public static void makeNewMaze(int n, int m, int numHoles) {
+        lab.init();
+        lab.randLab(numHoles);
+        lab = doDFS(n, m, numHoles);
     }
 
 
